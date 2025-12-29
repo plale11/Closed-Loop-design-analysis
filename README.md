@@ -1,37 +1,52 @@
-## ABSTRACT 200 WORDS
-최근 de novo 항체 설계 연구는 개별 모델의 정확도를 향상시키는 접근에서 벗어나, 설계 파이프라인 전체를 최적화하는 방향으로 전환되고 있다. RFdiffusion과 같은 생성 모델은 에피토프 조건화를 통해 항체 설계의 탐색 범위를 크게 확장했지만, 여전히 많은 연구들이 단일 생성(single-shot) 구조에 의존하며 설계 실패를 체계적으로 활용하지 못하고 있다. 본 프로젝트는 최근 연구들이 왜 점차 closed-loop 최적화 구조를 채택하고 있는지를 분석하고, 설계 실패 처리 방식이 de novo 항체 설계의 실험적 현실성에 미치는 영향을 검증하는 것을 목표로 했다.
 
-이를 위해 2023–2025년 발표된 de novo 항체 및 단백질 설계 논문 6–8편을 선정해, 설계 구조, 실패 처리 방식, 조건화 기법, 반복적 개선 여부를 기준으로 동일한 분석 프레임을 적용했다. 또한 단일 생성 구조와 closed-loop 구조의 차이를 직관적으로 비교하기 위해, 반복 피드백이 설계 효율에 미치는 영향을 시각화하는 간단한 toy 시뮬레이션을 구현했다.
+Recent research in de novo antibody design has shifted away from improving the accuracy of individual models and toward optimizing the overall design pipeline. While generative models such as RFdiffusion have expanded the design space through epitope conditioning, many studies still rely on single-shot frameworks that fail to systematically incorporate design failures. This project aims to analyze why closed-loop optimization structures are increasingly adopted and to evaluate how failure-handling strategies affect the experimental feasibility of de novo antibody design.
 
-분석 결과, de novo 설계의 주요 병목은 모델의 예측 정확도가 아니라 실패가 다음 설계에 반영되지 않는 파이프라인 구조에 있음을 확인했다. 단일 생성 접근에서는 실패한 설계가 폐기되는 반면, closed-loop 구조에서는 실패가 제약 조건이나 데이터로 전환되어 반복 과정에서 설계 효율이 점진적으로 향상되었다. 이러한 결과는 closed-loop 최적화가 선택적 성능 개선 기법이 아니라, de novo 항체 설계를 실제 실험 단계로 연결하기 위한 필수 조건임을 시사한다. 본 프로젝트는 바이오인포매틱스 연구의 중심이 단일 모델에서 시스템적 설계 구조로 이동하고 있음을 보여준다.
+To explore this question in practice, I selected six to eight representative studies on de novo antibody and protein design published between 2023 and 2025 and examined them using a unified analytical framework. The analysis focused on pipeline structure, failure-handling strategies, conditioning methods, and the presence of iterative refinement. To further clarify the differences between single-shot and closed-loop design approaches, I also implemented a simple toy simulation that visualizes how iterative feedback influences design efficiency.
+
+The analysis indicates that the primary bottleneck in de novo design lies not in model prediction accuracy, but in pipeline architectures that fail to incorporate unsuccessful designs into subsequent iterations. In single-shot approaches, failed designs are discarded and provide no guidance for future attempts. In contrast, closed-loop frameworks transform failure into constraints or data, enabling iterative refinement and progressively improving design efficiency. These findings suggest that closed-loop optimization is not merely an optional performance enhancement, but a necessary structural condition for translating de novo antibody design into realistic experimental workflows. Overall, this project illustrates a broader shift in bioinformatics research from optimizing individual models to designing robust, system-level pipelines.
 
 
+## Key Conclusions from the Annotated Paper Review
+## (Synthesis of 6–8 Studies)
 
-## README Draft
+1. Performance limitations in de novo design arise from pipeline structure, not model accuracy.
 
-📌 Annotated Paper Review에서 도출되는 핵심 결론 (6–8편 종합)
-① de novo 설계의 성능 한계는 “정확도”보다 “구조”에서 발생한다
-여러 de novo 항체·단백질 설계 논문을 비교한 결과, 설계 실패의 주요 원인은 개별 모델의 예측 정확도가 아니라, 실패가 다음 설계에 체계적으로 반영되지 않는 파이프라인 구조에 있었다. 단일 생성(single-shot) 접근에서는 실패가 검증 단계에서 걸러질 뿐, 이후 설계 과정에 학습 신호로 누적되지 않았다.
-👉 결론: de novo 설계의 병목은 모델 성능이 아니라 실패 처리 방식이다.
+A comparative analysis of multiple de novo antibody and protein design studies showed that design failures were primarily driven not by insufficient predictive accuracy of individual models, but by pipeline architectures that failed to reflect unsuccessful outcomes in subsequent design cycles. In single-shot approaches, failed designs were filtered out during validation and did not accumulate as learning signals for future iterations.
 
-② RFdiffusion은 설계 “범위”를 확장했지만, 실패 누적 문제는 남아 있다
-RFdiffusion 기반 연구들은 에피토프 조건화와 CDR 루프 생성 등을 통해 기존 라이브러리 기반 설계보다 훨씬 넓은 설계 공간을 탐색할 수 있게 만들었다. 그러나 분석 결과, 단일 생성 구조를 유지하는 경우 실패한 설계는 여전히 폐기되며, 반복 설계 과정에서 체계적인 개선이 발생하지 않는다는 공통된 한계를 보였다.
-👉 결론: RFdiffusion은 설계 자유도를 확장했지만, 반복 최적화를 보장하지는 않는다.
-
-③ 실패를 데이터로 전환하는 논문은 모두 closed-loop 구조를 가진다
-분석한 논문 중, 실패 설계를 다음 설계의 제약 조건이나 학습 데이터로 명시적으로 활용한 연구들은 모두 closed-loop 또는 lab-in-the-loop 구조를 포함하고 있었다. 이들 연구에서는 생성–예측–실험–재설계가 반복되며, 설계 성공률이 점진적으로 향상되는 패턴이 관찰되었다.
-👉 결론: 실패를 활용하는 설계는 예외 없이 closed-loop 구조를 전제로 한다.
-
-④ closed-loop는 성능 향상 기법이 아니라 “현실성 확보 장치”다
-논문들을 비교하며, closed-loop 접근의 핵심 역할은 최고 성능의 설계를 한 번에 생성하는 것이 아니라, 실패가 불가피한 생물학적 시스템에서 반복 실험 비용을 줄이고 탐색 효율을 높이는 데 있음을 확인했다. 이는 closed-loop가 선택적 최적화 기법이 아니라 실험적 현실성을 확보하기 위한 필수 구조임을 의미한다.
-👉 결론: closed-loop는 ‘있으면 좋은 옵션’이 아니라 ‘없으면 작동하지 않는 조건’이다.
+Conclusion: The main bottleneck in de novo design is not model performance, but failure-handling strategy.
 
 
 
+2. RFdiffusion expands design scope, but does not resolve failure accumulation.
 
-⑤ 최신 연구 흐름은 “더 좋은 모델”보다 “더 잘 설계된 과정”으로 이동 중이다
-종합적으로 분석한 결과, 최신 de novo 항체 설계 연구들은 개별 모델의 성능 경쟁보다, 설계–검증–재설계를 하나의 순환 시스템으로 통합하는 방향으로 수렴하고 있었다. 이는 바이오인포매틱스 연구의 초점이 단일 알고리즘에서 전체 파이프라인 설계로 이동하고 있음을 보여준다.
-👉 결론: 최신 트렌드의 핵심은 모델이 아니라 설계 구조다.
+RFdiffusion-based approaches significantly broaden the design space through epitope conditioning and CDR loop generation, enabling exploration beyond traditional library-based methods. However, when implemented within a single-shot architecture, failed designs are still discarded, preventing systematic improvement across iterations.
+
+Conclusion: RFdiffusion increases design freedom but does not guarantee iterative optimization.
+
+
+
+3. All studies that reuse failure as data adopt a closed-loop structure.
+
+Among the analyzed papers, every study that explicitly reused failed designs as constraints or training signals for subsequent designs employed a closed-loop or lab-in-the-loop architecture. These studies consistently demonstrated gradual improvements in design success rates through iterative cycles of generation, prediction, experimental evaluation, and redesign.
+
+Conclusion: Designs that meaningfully leverage failure inherently presuppose a closed-loop structure.
+
+
+
+4. Closed-loop design is not a performance enhancement, but a mechanism for experimental realism.
+
+Across the reviewed literature, the primary function of closed-loop architectures was not to produce optimal designs in a single attempt, but to reduce experimental costs and improve exploration efficiency in biological systems where failure is unavoidable. This reframes closed-loop optimization as a structural necessity rather than an optional refinement.
+
+Conclusion: Closed-loop design is not a “nice-to-have,” but a prerequisite for experimental feasibility.
+
+
+
+5. The research focus is shifting from better models to better-designed processes.
+
+Taken together, the analyzed studies indicate a clear trend toward integrating design, validation, and redesign into unified, cyclical pipelines, rather than prioritizing isolated improvements in model accuracy. This reflects a broader transition in bioinformatics research from algorithm-centric development to system-level pipeline design.
+
+Conclusion: The core of current de novo design research lies in pipeline architecture, not individual models.
+
 
 ## Pipeline Comparison
 <img width="1760" height="1056" alt="closed-loop chart" src="https://github.com/user-attachments/assets/2a4b78bb-e901-40ff-a9ff-5d3306a4d778" />
