@@ -6,8 +6,8 @@ To explore this question in practice, I selected six to eight representative stu
 The analysis indicates that the primary bottleneck in de novo design lies not in model prediction accuracy, but in pipeline architectures that fail to incorporate unsuccessful designs into subsequent iterations. In single-shot approaches, failed designs are discarded and provide no guidance for future attempts. In contrast, closed-loop frameworks transform failure into constraints or data, enabling iterative refinement and progressively improving design efficiency. These findings suggest that closed-loop optimization is not merely an optional performance enhancement, but a necessary structural condition for translating de novo antibody design into realistic experimental workflows. Overall, this project illustrates a broader shift in bioinformatics research from optimizing individual models to designing robust, system-level pipelines.
 
 
-## Key Conclusions from the Annotated Paper Review
-## (Synthesis of 6–8 Studies)
+## Key Conclusions from the Annotated Paper Review  (Synthesis of 6–8 Studies)
+
 
 1. Performance limitations in de novo design arise from pipeline structure, not model accuracy.
 
